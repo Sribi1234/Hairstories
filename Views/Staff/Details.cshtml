@@ -1,0 +1,69 @@
+@model Hairstories.Models.Staff
+@{
+    ViewData["Title"] = "Staff Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="mb-4">
+    <h2><i class="fas fa-user-circle"></i> @Model.FullName</h2>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Staff Information</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Email:</strong> @Model.Email</p>
+                <p><strong>Phone:</strong> @Model.Phone</p>
+                <p><strong>Role:</strong> <span class="badge bg-secondary">@Model.Role</span></p>
+                <p><strong>Working Hours:</strong> @Model.WorkingHours</p>
+                <p><strong>Status:</strong> 
+                    @if (Model.IsActive)
+                    {
+                        <span class="badge bg-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Inactive</span>
+                    }
+                </p>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.StaffServices?.Any() == true)
+    {
+        <div class="col-md-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Services Offered</h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.StaffServices.Any())
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var service in Model.StaffServices)
+                            {
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <strong>@service.Service?.ServiceName</strong>
+                                    <span class="badge bg-primary rounded-pill">@service.Service?.DurationMinutes min</span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="d-grid gap-2 d-md-flex justify-content-md-start">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">
+        <i class="fas fa-edit"></i> Edit
+    </a>
+    <a asp-action="Index" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>

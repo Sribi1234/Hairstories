@@ -1,0 +1,82 @@
+@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var upcomingAppointments = ViewBag.UpcomingAppointments as List<Hairstories.Models.Appointment> ?? new List<Hairstories.Models.Appointment>();
+}
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card dashboard-card">
+            <div class="dashboard-number">@ViewBag.TodayBookings</div>
+            <p class="text-muted">Today's Bookings</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card dashboard-card">
+            <div class="dashboard-number">@ViewBag.TotalCustomers</div>
+            <p class="text-muted">Total Customers</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card dashboard-card">
+            <div class="dashboard-number">@ViewBag.TodayRevenue</div>
+            <p class="text-muted">Today's Revenue</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card dashboard-card">
+            <div class="dashboard-number">@upcomingAppointments.Count</div>
+            <p class="text-muted">Upcoming Appointments</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Upcoming Appointments Today</h5>
+            </div>
+            <div class="card-body">
+                @if (upcomingAppointments.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Customer</th>
+                                    <th>Service</th>
+                                    <th>Stylist</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var appt in upcomingAppointments)
+                                {
+                                    <tr>
+                                        <td>@appt.AppointmentDateTime.ToString("hh:mm tt")</td>
+                                        <td>@appt.Customer?.FullName</td>
+                                        <td>@appt.Service?.ServiceName</td>
+                                        <td>@appt.Staff?.FullName</td>
+                                        <td>
+                                            <span class="badge bg-info">@appt.Status</span>
+                                        </td>
+                                        <td>
+                                            <a asp-action="Details" asp-controller="Appointments" asp-route-id="@appt.Id" class="btn btn-sm btn-primary">View</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No appointments scheduled for today.</p>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,104 @@
+@model Hairstories.Models.Appointment
+@{
+    ViewData["Title"] = "Appointment Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="mb-4">
+    <h2><i class="fas fa-calendar-check"></i> Appointment Details</h2>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Appointment Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Customer:</strong> @Model.Customer?.FullName</p>
+                        <p><strong>Contact:</strong> @Model.Customer?.Email | @Model.Customer?.Phone</p>
+                        <p><strong>Service:</strong> @Model.Service?.ServiceName</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Stylist:</strong> @Model.Staff?.FullName</p>
+                        <p><strong>Date & Time:</strong> @Model.AppointmentDateTime.ToString("dddd, MMMM dd, yyyy hh:mm tt")</p>
+                        <p><strong>Duration:</strong> @Model.Service?.DurationMinutes minutes</p>
+                        <p><strong>End Time:</strong> @Model.AppointmentEndTime.ToString("hh:mm tt")</p>
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Status:</strong> <span class="badge bg-info">@Model.Status</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Payment Status:</strong> 
+                            @if (Model.PaymentStatus == Hairstories.Models.PaymentStatus.Paid)
+                            {
+                                <span class="badge bg-success">Paid</span>
+                            }
+                            else if (Model.PaymentStatus == Hairstories.Models.PaymentStatus.Pending)
+                            {
+                                <span class="badge bg-warning">Pending</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Refunded</span>
+                            }
+                        </p>
+                    </div>
+                </div>
+                <hr />
+                <p><strong>Service Price:</strong> <strong class="text-success">@Model.ServicePrice.ToString("C")</strong></p>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.Notes))
+        {
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Notes</h5>
+                </div>
+                <div class="card-body">
+                    @Model.Notes
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Quick Actions</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Status != Hairstories.Models.AppointmentStatus.Cancelled && Model.Status != Hairstories.Models.AppointmentStatus.Completed)
+                {
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning w-100 mb-2">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <form asp-action="Cancel" asp-route-id="@Model.Id" method="post">
+                        <button type="submit" class="btn btn-danger w-100 mb-2" onclick="return confirm('Cancel this appointment?');">
+                            <i class="fas fa-times"></i> Cancel
+                        </button>
+                    </form>
+                }
+
+                @if (Model.PaymentStatus == Hairstories.Models.PaymentStatus.Pending && Model.Status == Hairstories.Models.AppointmentStatus.Completed)
+                {
+                    <form asp-action="CompletePayment" asp-route-id="@Model.Id" method="post">
+                        <button type="submit" class="btn btn-success w-100 mb-2">
+                            <i class="fas fa-check"></i> Mark as Paid
+                        </button>
+                    </form>
+                }
+
+                <a asp-action="Index" class="btn btn-secondary w-100">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

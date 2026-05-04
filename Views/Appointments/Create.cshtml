@@ -1,0 +1,116 @@
+@model Hairstories.Models.Appointment
+@{
+    ViewData["Title"] = "Book Appointment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="mb-4">
+    <h2><i class="fas fa-calendar-plus"></i> Book Appointment</h2>
+</div>
+
+<div class="form-section">
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="CustomerId" class="form-label">Customer</label>
+                <select asp-for="CustomerId" class="form-select">
+                    <option value="">-- Select Customer --</option>
+                    @if (ViewBag.Customers != null)
+                    {
+                        @foreach (var customer in ViewBag.Customers)
+                        {
+                            <option value="@customer.Id">@customer.FullName</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="CustomerId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="ServiceId" class="form-label">Service</label>
+                <select asp-for="ServiceId" class="form-select" id="serviceSelect">
+                    <option value="">-- Select Service --</option>
+                    @if (ViewBag.Services != null)
+                    {
+                        @foreach (var service in ViewBag.Services)
+                        {
+                            <option value="@service.Id">@service.ServiceName</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="ServiceId" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="StaffId" class="form-label">Stylist</label>
+                <select asp-for="StaffId" class="form-select">
+                    <option value="">-- Select Stylist --</option>
+                    @if (ViewBag.Stylists != null)
+                    {
+                        @foreach (var stylist in ViewBag.Stylists)
+                        {
+                            <option value="@stylist.Id">@stylist.FullName</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="StaffId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="AppointmentDateTime" class="form-label">Date & Time</label>
+                <input asp-for="AppointmentDateTime" class="form-control" type="datetime-local" />
+                <span asp-validation-for="AppointmentDateTime" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Notes" class="form-label">Notes</label>
+            <textarea asp-for="Notes" class="form-control" rows="4" placeholder="Add any special requests or notes..."></textarea>
+            <span asp-validation-for="Notes" class="text-danger"></span>
+        </div>
+
+        <div class="alert alert-info">
+            <strong><i class="fas fa-info-circle"></i> Service Information:</strong>
+            <p id="serviceInfo" class="mb-0">Select a service to see details</p>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Book Appointment</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        var servicesDataList = new List<dynamic>();
+        if (ViewBag.Services != null)
+        {
+            foreach (var service in ViewBag.Services)
+            {
+                servicesDataList.Add(new { service.Id, service.ServiceName, service.DurationMinutes, service.Price });
+            }
+        }
+        var servicesData = System.Text.Json.JsonSerializer.Serialize(servicesDataList);
+    }
+    <script>
+        var services = @Html.Raw(servicesData);
+
+        document.getElementById('serviceSelect').addEventListener('change', function() {
+            var serviceId = this.value;
+            var service = services.find(s => s.Id == serviceId);
+            
+            if (service) {
+                document.getElementById('serviceInfo').innerHTML = 
+                    `<strong>${service.ServiceName}</strong> - Duration: ${service.DurationMinutes} minutes | Price: $${service.Price.toFixed(2)}`;
+            } else {
+                document.getElementById('serviceInfo').innerHTML = 'Select a service to see details';
+            }
+        });
+    </script>
+}

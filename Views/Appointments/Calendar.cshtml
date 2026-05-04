@@ -1,0 +1,107 @@
+@model IEnumerable<Hairstories.Models.Appointment>
+@{
+    ViewData["Title"] = "Calendar View";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var currentMonth = ViewBag.CurrentMonth as int? ?? DateTime.Now.Month;
+    var currentYear = ViewBag.CurrentYear as int? ?? DateTime.Now.Year;
+    var appointments = ViewBag.Appointments as List<Hairstories.Models.Appointment> ?? new List<Hairstories.Models.Appointment>();
+}
+
+<div class="mb-4">
+    <h2><i class="fas fa-calendar-alt"></i> Calendar View</h2>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="row align-items-center mb-3">
+            <div class="col-md-6">
+                <h5 class="mb-0">
+                    <a asp-action="Calendar" asp-route-month="@(currentMonth == 1 ? 12 : currentMonth - 1)" asp-route-year="@(currentMonth == 1 ? currentYear - 1 : currentYear)" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                    <span class="mx-3">@(new DateTime(currentYear, currentMonth, 1).ToString("MMMM yyyy"))</span>
+                    <a asp-action="Calendar" asp-route-month="@(currentMonth == 12 ? 1 : currentMonth + 1)" asp-route-year="@(currentMonth == 12 ? currentYear + 1 : currentYear)" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </h5>
+            </div>
+            <div class="col-md-6 text-end">
+                <a asp-action="Index" class="btn btn-outline-info btn-sm">
+                    <i class="fas fa-list"></i> List View
+                </a>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th class="text-center">Sun</th>
+                        <th class="text-center">Mon</th>
+                        <th class="text-center">Tue</th>
+                        <th class="text-center">Wed</th>
+                        <th class="text-center">Thu</th>
+                        <th class="text-center">Fri</th>
+                        <th class="text-center">Sat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var firstDay = new DateTime(currentYear, currentMonth, 1);
+                        var lastDay = firstDay.AddMonths(1).AddDays(-1);
+                        var startDate = firstDay.AddDays(-(int)firstDay.DayOfWeek);
+                        var endDate = lastDay.AddDays(7 - (int)lastDay.DayOfWeek);
+
+                        var week = new List<DateTime>();
+                        for (var date = startDate; date <= endDate; date = date.AddDays(1))
+                        {
+                            week.Add(date);
+
+                            if (week.Count == 7)
+                            {
+                                <tr style="height: 100px;">
+                                    @foreach (var day in week)
+                                    {
+                                        var dayAppointments = appointments.Where(a => a.AppointmentDateTime.Date == day.Date).ToList();
+                                        var isCurrentMonth = day.Month == currentMonth;
+                                        var isToday = day.Date == DateTime.Now.Date;
+
+                                        <td class="@(isCurrentMonth ? "" : "table-light") @(isToday ? "table-info" : "")" style="vertical-align: top; padding: 5px;">
+                                            <div style="font-weight: @(isToday ? "bold" : "normal"); color: @(!isCurrentMonth ? "#ccc" : "black");">
+                                                @day.Day
+                                            </div>
+                                            <div style="font-size: 0.85rem; margin-top: 3px;">
+                                                @foreach (var appt in dayAppointments.Take(2))
+                                                {
+                                                    <div class="badge bg-primary mb-1" style="display: block; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                                        @appt.AppointmentDateTime.ToString("hh:mm") - @appt.Customer?.FirstName
+                                                    </div>
+                                                }
+                                                @if (dayAppointments.Count > 2)
+                                                {
+                                                    <small class="text-muted">+@(dayAppointments.Count - 2) more</small>
+                                                }
+                                            </div>
+                                        </td>
+                                    }
+                                </tr>
+                                week = new List<DateTime>();
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-header">
+        <h5 class="mb-0">Total Appointments This Month</h5>
+    </div>
+    <div class="card-body">
+        <p class="mb-0">
+            <strong>@appointments.Count</strong> appointments scheduled for @(new DateTime(currentYear, currentMonth, 1).ToString("MMMM yyyy"))
+        </p>
+    </div>
+</div>

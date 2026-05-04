@@ -1,0 +1,89 @@
+@model Hairstories.Controllers.StaffServicesViewModel
+@{
+    ViewData["Title"] = "Assign Services";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="mb-4">
+    <h2><i class="fas fa-link"></i> Assign Services to @Model.StaffName</h2>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Assigned Services (@Model.AssignedServices.Count)</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                @if (Model.AssignedServices.Any())
+                {
+                    @foreach (var service in Model.AssignedServices)
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>@service.ServiceName</strong>
+                                <br />
+                                <small class="text-muted">@service.DurationMinutes min - @service.Price.ToString("C")</small>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-danger" onclick="moveService(this, 'remove')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="list-group-item text-muted">
+                        <i class="fas fa-info-circle"></i> No services assigned yet
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">Available Services (@Model.AvailableServices.Count)</h5>
+            </div>
+            <div class="list-group list-group-flush">
+                @if (Model.AvailableServices.Any())
+                {
+                    @foreach (var service in Model.AvailableServices)
+                    {
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>@service.ServiceName</strong>
+                                <br />
+                                <small class="text-muted">@service.DurationMinutes min - @service.Price.ToString("C")</small>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-success" onclick="moveService(this, 'add')">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="list-group-item text-muted">
+                        <i class="fas fa-check-circle"></i> All services assigned
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="d-grid gap-2 d-md-flex justify-content-md-start">
+    <a asp-action="Details" asp-route-id="@Model.StaffId" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+</div>
+
+<script>
+    function moveService(button, action) {
+        // Note: This is a UI placeholder. 
+        // In a real implementation, you would handle this via AJAX
+        alert('Service assignment feature would be implemented with AJAX');
+    }
+</script>

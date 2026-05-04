@@ -1,0 +1,111 @@
+@model Hairstories.Models.Appointment
+@{
+    ViewData["Title"] = "Edit Appointment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="mb-4">
+    <h2><i class="fas fa-edit"></i> Edit Appointment</h2>
+</div>
+
+<div class="form-section">
+    <form asp-action="Edit" method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+        <input type="hidden" asp-for="Id" />
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="CustomerId" class="form-label">Customer</label>
+                <select asp-for="CustomerId" class="form-select">
+                    <option value="">-- Select Customer --</option>
+                    @if (ViewBag.Customers != null)
+                    {
+                        @foreach (var customer in ViewBag.Customers)
+                        {
+                            <option value="@customer.Id">@customer.FullName</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="CustomerId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="ServiceId" class="form-label">Service</label>
+                <select asp-for="ServiceId" class="form-select" id="serviceSelect">
+                    <option value="">-- Select Service --</option>
+                    @if (ViewBag.Services != null)
+                    {
+                        @foreach (var service in ViewBag.Services)
+                        {
+                            <option value="@service.Id">@service.ServiceName</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="ServiceId" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="StaffId" class="form-label">Stylist</label>
+                <select asp-for="StaffId" class="form-select">
+                    <option value="">-- Select Stylist --</option>
+                    @if (ViewBag.Stylists != null)
+                    {
+                        @foreach (var stylist in ViewBag.Stylists)
+                        {
+                            <option value="@stylist.Id">@stylist.FullName</option>
+                        }
+                    }
+                </select>
+                <span asp-validation-for="StaffId" class="text-danger"></span>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="AppointmentDateTime" class="form-label">Date & Time</label>
+                <input asp-for="AppointmentDateTime" class="form-control" type="datetime-local" />
+                <span asp-validation-for="AppointmentDateTime" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label asp-for="Status" class="form-label">Status</label>
+                <select asp-for="Status" class="form-select">
+                    @foreach (var status in Enum.GetValues(typeof(Hairstories.Models.AppointmentStatus)))
+                    {
+                        <option value="@status">@status</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label asp-for="PaymentStatus" class="form-label">Payment Status</label>
+                <select asp-for="PaymentStatus" class="form-select">
+                    @foreach (var status in Enum.GetValues(typeof(Hairstories.Models.PaymentStatus)))
+                    {
+                        <option value="@status">@status</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Notes" class="form-label">Notes</label>
+            <textarea asp-for="Notes" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="Notes" class="text-danger"></span>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-primary">Update Appointment</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
