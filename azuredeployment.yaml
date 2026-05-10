@@ -7,7 +7,7 @@ permissions:
       contents: read
 
 env:
-  AZURE_WEBAPP_NAME: my-app    # Set this to your application's name
+  AZURE_WEBAPP_NAME: Hair-stories    # Set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.'      # Set this to the path to your web app project, defaults to the repository root
   NUGET_VERSION: '5.3.x'           # Set this to the dot net version to use
 
